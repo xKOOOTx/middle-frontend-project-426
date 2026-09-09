@@ -2,7 +2,8 @@ import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { db } from './db/index.js';
+import { db } from './db/index.ts';
+import { seed } from './db/seed.ts'
 
 const app = new Hono();
 
@@ -26,6 +27,8 @@ app.get('*', serveStatic({ path: `${staticRoot}/index.html` }));
 const port = Number(process.env.PORT) || 3000;
 
 await migrate(db, { migrationsFolder: './drizzle' });
+
+await seed();
 
 serve({ fetch: app.fetch, port }, (info) => {
     console.log(`Server running on port ${info.port}`);
