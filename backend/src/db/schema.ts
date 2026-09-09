@@ -17,3 +17,21 @@ export const products = pgTable('products', {
     brand: text('brand').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
 })
+
+export const users = pgTable('users', {
+    id: serial('id').primaryKey(),
+    email: text('email').notNull(),
+    passwordHash: text('password_hash').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+    emailIdx: uniqueIndex('users_email_idx').on(table.email)
+}));
+
+export const sessions = pgTable('sessions', {
+    id: serial('id').primaryKey(),
+    token: text('token').notNull(),
+    userId: integer('user_id').notNull().references(() => users.id),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+    tokenIdx: uniqueIndex('sessions_token_idx').on(table.token)
+}));

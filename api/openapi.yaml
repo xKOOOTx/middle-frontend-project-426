@@ -4,6 +4,82 @@ info:
   version: 0.0.0
 tags: []
 paths:
+  /auth/login:
+    post:
+      operationId: Auth_login
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /auth/logout:
+    post:
+      operationId: Auth_logout
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /auth/me:
+    get:
+      operationId: Auth_me
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /auth/register:
+    post:
+      operationId: Auth_register
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
   /health:
     get:
       operationId: Health_check
@@ -46,8 +122,48 @@ components:
           type: string
           enum:
             - ok
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          pattern: ^[^\s@]+@[^\s@]+\.[^\s@]+$
+          description: Грубая проверка вида local(собака/at)domain.tld — не полный RFC 5322, ловит только явный мусор.
+        password:
+          type: string
     Money:
       type: integer
       format: int32
       minimum: 0
       description: Целая сумма в рублях, без копеек — в магазине одна валюта.
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          pattern: ^[^\s@]+@[^\s@]+\.[^\s@]+$
+          description: Грубая проверка вида local(собака/at)domain.tld — не полный RFC 5322, ловит только явный мусор.
+        password:
+          type: string
+          minLength: 8
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - createdAt
+      properties:
+        id:
+          type: integer
+          format: int32
+        email:
+          type: string
+        createdAt:
+          type: string
+          format: date-time

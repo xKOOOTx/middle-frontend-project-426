@@ -4,7 +4,6 @@
   "scripts": {
     "build": "npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci && npm --prefix backend run build",
     "start": "npm --prefix backend run start",
-    // одна команда в корне прогоняет весь путь: TypeSpec → openapi.yaml → схема на бэке → типы на фронте.
     "generate": "npm --prefix api ci && npm --prefix api run generate && npm --prefix backend ci && npm --prefix backend run generate:schemas && npm --prefix frontend ci && npm --prefix frontend run generate:types"
   },
   "devDependencies": {

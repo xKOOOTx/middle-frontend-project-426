@@ -90,8 +90,10 @@ const Binary = () => {
   })
 }
 
-const ComponentsSchemasHealthStatus = T.Object({
-  status: T.Literal('ok')
+const ComponentsSchemasUser = T.Object({
+  id: T.Integer({ format: 'int32' }),
+  email: T.String(),
+  createdAt: T.String({ format: 'date-time' })
 })
 const ComponentsSchemasApiError = T.Object({
   code: T.String(),
@@ -105,8 +107,83 @@ const ComponentsSchemasApiError = T.Object({
     )
   )
 })
+const ComponentsSchemasLoginRequest = T.Object({
+  email: T.String({ pattern: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$' }),
+  password: T.String()
+})
+const ComponentsSchemasRegisterRequest = T.Object({
+  email: T.String({ pattern: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$' }),
+  password: T.String({ minLength: 8 })
+})
+const ComponentsSchemasHealthStatus = T.Object({
+  status: T.Literal('ok')
+})
 
 const schema = {
+  '/auth/login': {
+    POST: {
+      args: T.Object({
+        body: CloneType(ComponentsSchemasLoginRequest, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: CloneType(ComponentsSchemasUser, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasApiError, {
+          'x-status-code': '401',
+          'x-content-type': 'application/json'
+        })
+      ])
+    }
+  },
+  '/auth/logout': {
+    POST: {
+      args: T.Void(),
+      data: T.Any({ 'x-status-code': '204' }),
+      error: T.Union([T.Any({ 'x-status-code': 'default' })])
+    }
+  },
+  '/auth/me': {
+    GET: {
+      args: T.Void(),
+      data: CloneType(ComponentsSchemasUser, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasApiError, {
+          'x-status-code': '401',
+          'x-content-type': 'application/json'
+        })
+      ])
+    }
+  },
+  '/auth/register': {
+    POST: {
+      args: T.Object({
+        body: CloneType(ComponentsSchemasRegisterRequest, {
+          'x-content-type': 'application/json'
+        })
+      }),
+      data: CloneType(ComponentsSchemasUser, {
+        'x-status-code': '201',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasApiError, {
+          'x-status-code': '400',
+          'x-content-type': 'application/json'
+        }),
+        CloneType(ComponentsSchemasApiError, {
+          'x-status-code': '409',
+          'x-content-type': 'application/json'
+        })
+      ])
+    }
+  },
   '/health': {
     GET: {
       args: T.Void(),
@@ -128,7 +205,10 @@ const _components = {
   schemas: {
     ApiError: CloneType(ComponentsSchemasApiError),
     HealthStatus: CloneType(ComponentsSchemasHealthStatus),
-    Money: T.Integer({ format: 'int32', minimum: 0 })
+    LoginRequest: CloneType(ComponentsSchemasLoginRequest),
+    Money: T.Integer({ format: 'int32', minimum: 0 }),
+    RegisterRequest: CloneType(ComponentsSchemasRegisterRequest),
+    User: CloneType(ComponentsSchemasUser)
   }
 }
 
