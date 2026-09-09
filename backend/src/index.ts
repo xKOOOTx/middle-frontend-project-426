@@ -5,6 +5,7 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { db } from './db/index.js';
 import { seed } from './db/seed.js'
 import * as Sentry from '@sentry/node';
+import { join } from 'node:path'
 
 Sentry.init({
     dsn: process.env.SENTRY_DSN,
@@ -32,7 +33,9 @@ app.onError((err, c) => {
     return c.json({ error: 'Internal Server Error' }, 500);
 });
 
-const staticRoot = '../frontend/dist';
+// Путь от текущего файла, а не от process.cwd() — так статика находится
+// независимо от того, откуда запущен процесс (Docker, CI, локально).
+const staticRoot = join(import.meta.dirname, '../../frontend/dist');
 
 // Отдаём реальные файлы статики, если они существуют
 app.use('/*', serveStatic({ root: staticRoot }));
