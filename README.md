@@ -1,3 +1,6 @@
+# Ссылка на render
+[Рендер](https://middle-frontend-project-426.onrender.com/)
+
 # Интернет-магазин комплектующих для ПК
 
 [![hexlet-check](https://github.com/xKOOOTx/middle-frontend-project-426/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/xKOOOTx/middle-frontend-project-426/actions)
