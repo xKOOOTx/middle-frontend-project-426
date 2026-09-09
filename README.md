@@ -51,32 +51,40 @@ cd middle-frontend-project-426
 
 ### Корень репозитория
 ```bash
-  npm run build    # ставит зависимости и собирает и фронт, и бэк (frontend/dist + backend/dist)
-  npm run start    # стартует бэкенд (он же раздаёт собранный фронт) — предполагает, что переменные окружения уже заданы платформой (Render/CI), локально без них DATABASE_URL будет пустым
-  ### тесты (Playwright)
-  npx playwright test                          # прогнать e2e-тесты (нужен уже поднятый сервер на localhost:3000 или BASE_URL=... на нужный адрес)
-  npx playwright show-report                   # открыть HTML-отчёт последнего прогона
-  npx playwright install --with-deps chromium  # разово поставить браузер + системные либы
+    npm run build    # ставит зависимости и собирает и фронт, и бэк (frontend/dist + backend/dist)
+    npm run start    # стартует бэкенд (он же раздаёт собранный фронт) — предполагает, что переменные окружения уже заданы платформой (Render/CI), локально без них DATABASE_URL будет пустым
+    npm run generate # вся цепочка контракта разом: TypeSpec → openapi.yaml → схемы бэка → типы фронта
+    ### тесты (Playwright)
+    npx playwright test                          # прогнать e2e-тесты (нужен уже поднятый сервер на localhost:3000 или BASE_URL=... на нужный адрес)
+    npx playwright show-report                   # открыть HTML-отчёт последнего прогона
+    npx playwright install --with-deps chromium  # разово поставить браузер + системные либы
+```
+
+### api (спецификация: TypeSpec → OpenAPI)
+```bash
+    npm run generate              # tsp compile . — собирает api/main.tsp в api/openapi.yaml
 ```
 
 
 ### frontend (запускать из папки /frontend или npm --prefix frontend <script>)
 ```bash
-    npm run dev      # dev-сервер Vite с hot reload, localhost:5173
-    npm run build    # tsc -b && vite build — собирает только фронт, без бэка
-    npm run lint     # oxlint
-    npm run preview  # раздаёт уже собранный frontend/dist сам по себе, без бэкенда и API
+    npm run dev                   # dev-сервер Vite с hot reload, localhost:5173
+    npm run build                 # tsc -b && vite build — собирает только фронт, без бэка
+    npm run lint                  # oxlint
+    npm run preview               # раздаёт уже собранный frontend/dist сам по себе, без бэкенда и API
+    npm run generate:types        # openapi-typescript ../api/openapi.yaml -o src/types/api.d.ts — TS-типы из openapi.yaml
 ```
 
 ### backend
 ```bash
-    npm run dev  # tsx watch --env-file=.env src/index.ts — автоперезапуск на изменения, .env подхватывается сам
-    npm run build    # tsc → backend/dist
-    npm run start    # node dist/index.js — .env НЕ грузит сам, нужны переменные снаружи
+    npm run dev                   # tsx watch --env-file=.env src/index.ts — автоперезапуск на изменения, .env подхватывается сам
+    npm run build                 # tsc → backend/dist
+    npm run start                 # node dist/index.js — .env НЕ грузит сам, нужны переменные снаружи
+    npm run generate:schemas      # openapi-box ../api/openapi.yaml — TypeBox-схемы валидации из openapi.yaml → backend/schema.js
 ```
 
 ```bash
-    npx drizzle-kit generate # сгенерировать SQL-миграцию из изменений backend/src/db/schema.ts
+    npx drizzle-kit generate      # сгенерировать SQL-миграцию из изменений backend/src/db/schema.ts
 ```
 
 ### Локальный прогон "как в проде" (собранный код, вручную заданные переменные — то, чем проверял Playwright)
