@@ -45,7 +45,7 @@ app.get('*', serveStatic({ path: `${staticRoot}/index.html` }));
 
 const port = Number(process.env.PORT) || 3000;
 
-await migrate(db, { migrationsFolder: './drizzle' });
+await migrate(db, { migrationsFolder: join(import.meta.dirname, '../drizzle') });
 
 await seed();
 
