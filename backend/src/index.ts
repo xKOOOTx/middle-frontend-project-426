@@ -14,6 +14,11 @@ const app = new Hono();
 
 // API-роуты собираем в отдельном под-приложении
 const api = new Hono();
+
+api.get('/debug-sentry', () => {
+    throw new Error('My first backend Sentry error!')
+})
+
 api.get('/health', (c) => c.json({ status: 'ok' }));
 
 app.route('/api', api);

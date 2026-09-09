@@ -4,7 +4,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 import * as Sentry from '@sentry/react';
-import { Button } from 'antd'
+import { Button, Flex } from 'antd'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -24,19 +24,28 @@ function App() {
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
         </div>
-        <Button
-            color={'primary'}
-            variant={'filled'}
-            onClick={() => {
-              // Send a log before throwing the error
-              Sentry.logger.info('User triggered test error', {
-                action: 'test_error_button_click',
-              });
-              throw new Error('This is your second error!');
-            }}
-        >
-          Break the world
-        </Button>
+        <Flex gap={20}>
+          <Button
+              color={'primary'}
+              variant={'solid'}
+              onClick={() => {
+                // Send a log before throwing the error
+                Sentry.logger.info('User triggered test error', {
+                  action: 'test_error_button_click',
+                });
+                throw new Error('This is your second error!');
+              }}
+          >
+            Break the world
+          </Button>
+          <Button
+              color={'primary'}
+              variant={'solid'}
+              onClick={() => fetch('/api/debug-sentry')}
+          >
+            Break the world (backend edition)
+          </Button>
+        </Flex>
         <button
           type="button"
           className="counter"
