@@ -4,6 +4,11 @@ import { Hono } from 'hono';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { db } from './db/index.js';
 import { seed } from './db/seed.js'
+import * as Sentry from '@sentry/node';
+
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+});
 
 const app = new Hono();
 
@@ -15,6 +20,12 @@ app.route('/api', api);
 
 // Всё, что не подошло под известные /api/* маршруты — честный JSON 404
 app.all('/api/*', (c) => c.json({ error: 'Not found' }, 404));
+
+app.onError((err, c) => {
+    Sentry.captureException(err);
+    console.error(err);
+    return c.json({ error: 'Internal Server Error' }, 500);
+});
 
 const staticRoot = '../frontend/dist';
 
