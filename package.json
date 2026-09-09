@@ -1,0 +1,8 @@
+{
+  "name": "middle-frontend-project-426",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci && npm --prefix backend run build",
+    "start": "npm --prefix backend run start"
+  }
+}
