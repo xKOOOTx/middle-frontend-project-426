@@ -1,6 +1,8 @@
 # ---- frontend build ----
 FROM node:26 AS frontend-builder
 WORKDIR /app/frontend
+ARG VITE_SENTRY_DSN
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
