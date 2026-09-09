@@ -2,8 +2,8 @@ import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { db } from './db/index.ts';
-import { seed } from './db/seed.ts'
+import { db } from './db/index.js';
+import { seed } from './db/seed.js'
 
 const app = new Hono();
 
