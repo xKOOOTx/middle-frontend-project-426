@@ -1,9 +1,14 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router'
 import './index.css'
 import App from './App.tsx'
 
 import * as Sentry from "@sentry/react";
+import { AuthProvider } from './context/AuthContext.tsx'
+import { ProtectedRoute } from './components/ProtectedRoute.tsx'
+import { NavBar } from './components/NavBar.tsx'
+import { AuthForm } from './pages/AuthForm.tsx'
 
 Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
@@ -17,6 +22,16 @@ Sentry.init({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+        <AuthProvider>
+            <NavBar />
+            <Routes>
+                <Route path="/" element={<App />} />
+                <Route path="/account" element={<ProtectedRoute><App /></ProtectedRoute>} />
+                <Route path="/signup" element={<AuthForm mode={'register'} />} />
+                <Route path="/signin" element={<AuthForm mode={'login'} />} />
+            </Routes>
+        </AuthProvider>
+    </BrowserRouter>
   </StrictMode>,
 )

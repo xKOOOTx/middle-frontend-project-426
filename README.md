@@ -80,7 +80,7 @@ cd middle-frontend-project-426
     npm run dev                   # tsx watch --env-file=.env src/index.ts — автоперезапуск на изменения, .env подхватывается сам
     npm run build                 # tsc → backend/dist
     npm run start                 # node dist/index.js — .env НЕ грузит сам, нужны переменные снаружи
-    npm run generate:schemas      # openapi-box ../api/openapi.yaml — TypeBox-схемы валидации из openapi.yaml → backend/schema.js
+    npm run generate:schemas      # openapi-box ../api/openapi.yaml -o src/schema.js — TypeBox-схемы валидации из openapi.yaml → backend/src/schema.js
 ```
 
 ```bash
