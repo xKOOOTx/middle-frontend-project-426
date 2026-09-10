@@ -120,7 +120,7 @@ const ComponentsSchemasHealthStatus = T.Object({
 })
 
 const schema = {
-  '/auth/login': {
+  '/api/auth/login': {
     POST: {
       args: T.Object({
         body: CloneType(ComponentsSchemasLoginRequest, {
@@ -139,14 +139,14 @@ const schema = {
       ])
     }
   },
-  '/auth/logout': {
+  '/api/auth/logout': {
     POST: {
       args: T.Void(),
       data: T.Any({ 'x-status-code': '204' }),
       error: T.Union([T.Any({ 'x-status-code': 'default' })])
     }
   },
-  '/auth/me': {
+  '/api/auth/me': {
     GET: {
       args: T.Void(),
       data: CloneType(ComponentsSchemasUser, {
@@ -161,7 +161,7 @@ const schema = {
       ])
     }
   },
-  '/auth/register': {
+  '/api/auth/register': {
     POST: {
       args: T.Object({
         body: CloneType(ComponentsSchemasRegisterRequest, {
@@ -184,7 +184,7 @@ const schema = {
       ])
     }
   },
-  '/health': {
+  '/api/health': {
     GET: {
       args: T.Void(),
       data: CloneType(ComponentsSchemasHealthStatus, {

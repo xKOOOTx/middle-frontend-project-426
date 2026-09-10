@@ -3,6 +3,7 @@ import "@typespec/http";
 using Http;
 
 @service(#{ title: "PC Shop API" })
+@route("/api")
 namespace PcShop;
 
 /** Целая сумма в рублях, без копеек — в магазине одна валюта. */

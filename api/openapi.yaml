@@ -4,7 +4,7 @@ info:
   version: 0.0.0
 tags: []
 paths:
-  /auth/login:
+  /api/auth/login:
     post:
       operationId: Auth_login
       parameters: []
@@ -27,14 +27,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
-  /auth/logout:
+  /api/auth/logout:
     post:
       operationId: Auth_logout
       parameters: []
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /auth/me:
+  /api/auth/me:
     get:
       operationId: Auth_me
       parameters: []
@@ -51,7 +51,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-  /auth/register:
+  /api/auth/register:
     post:
       operationId: Auth_register
       parameters: []
@@ -80,7 +80,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/RegisterRequest'
-  /health:
+  /api/health:
     get:
       operationId: Health_check
       parameters: []
