@@ -115,8 +115,30 @@ const ComponentsSchemasRegisterRequest = T.Object({
   email: T.String({ pattern: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$' }),
   password: T.String({ minLength: 8 })
 })
+const ComponentsSchemasCategory = T.Object({
+  id: T.Integer({ format: 'int32' }),
+  slug: T.String(),
+  name: T.String()
+})
 const ComponentsSchemasHealthStatus = T.Object({
   status: T.Literal('ok')
+})
+const ComponentsSchemasMoney = T.Integer({ format: 'int32', minimum: 0 })
+const ComponentsSchemasProduct = T.Object({
+  id: T.Integer({ format: 'int32' }),
+  slug: T.String(),
+  name: T.String(),
+  description: T.String(),
+  price: CloneType(ComponentsSchemasMoney),
+  imageUrl: T.Optional(T.String()),
+  available: T.Boolean(),
+  categorySlug: T.String()
+})
+const ComponentsSchemasProductList = T.Object({
+  items: T.Array(CloneType(ComponentsSchemasProduct)),
+  total: T.Integer({ format: 'int32' }),
+  page: T.Integer({ format: 'int32' }),
+  pageSize: T.Integer({ format: 'int32' })
 })
 
 const schema = {
@@ -184,6 +206,16 @@ const schema = {
       ])
     }
   },
+  '/api/categories': {
+    GET: {
+      args: T.Void(),
+      data: T.Array(CloneType(ComponentsSchemasCategory), {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([T.Any({ 'x-status-code': 'default' })])
+    }
+  },
   '/api/health': {
     GET: {
       args: T.Void(),
@@ -198,15 +230,53 @@ const schema = {
         })
       ])
     }
+  },
+  '/api/products': {
+    GET: {
+      args: T.Optional(
+        T.Object({
+          query: T.Optional(
+            T.Object({
+              category: T.Optional(T.String({ 'x-in': 'query' })),
+              priceMin: T.Optional(
+                CloneType(ComponentsSchemasMoney, { 'x-in': 'query' })
+              ),
+              priceMax: T.Optional(
+                CloneType(ComponentsSchemasMoney, { 'x-in': 'query' })
+              ),
+              available: T.Optional(T.Boolean({ 'x-in': 'query' })),
+              search: T.Optional(T.String({ 'x-in': 'query' })),
+              page: T.Optional(T.Integer({ format: 'int32', 'x-in': 'query' })),
+              pageSize: T.Optional(
+                T.Integer({ format: 'int32', 'x-in': 'query' })
+              )
+            })
+          )
+        })
+      ),
+      data: CloneType(ComponentsSchemasProductList, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasApiError, {
+          'x-status-code': '400',
+          'x-content-type': 'application/json'
+        })
+      ])
+    }
   }
 }
 
 const _components = {
   schemas: {
     ApiError: CloneType(ComponentsSchemasApiError),
+    Category: CloneType(ComponentsSchemasCategory),
     HealthStatus: CloneType(ComponentsSchemasHealthStatus),
     LoginRequest: CloneType(ComponentsSchemasLoginRequest),
-    Money: T.Integer({ format: 'int32', minimum: 0 }),
+    Money: CloneType(ComponentsSchemasMoney, { 'x-in': 'query' }),
+    Product: CloneType(ComponentsSchemasProduct),
+    ProductList: CloneType(ComponentsSchemasProductList),
     RegisterRequest: CloneType(ComponentsSchemasRegisterRequest),
     User: CloneType(ComponentsSchemasUser)
   }

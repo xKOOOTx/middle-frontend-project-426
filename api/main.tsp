@@ -71,6 +71,52 @@ namespace Auth {
         | { @statusCode statusCode: 401; @body error: ApiError };
 }
 
+model Category {
+    id: int32;
+    slug: string;
+    name: string;
+}
+
+model Product {
+    id: int32;
+    slug: string;
+    name: string;
+    description: string;
+    price: Money;
+    imageUrl?: string;
+    available: boolean;
+    categorySlug: string;
+}
+
+model ProductList {
+    items: Product[];
+    total: int32;
+    page: int32;
+    pageSize: int32;
+}
+
+@route("/products")
+namespace Products {
+    @get
+    op list(
+        @query category?: string,
+        @query priceMin?: Money,
+        @query priceMax?: Money,
+        @query available?: boolean,
+        @query search?: string,
+        @query page?: int32,
+        @query pageSize?: int32,
+    ):
+    | { @statusCode statusCode: 200; @body body: ProductList }
+    | { @statusCode statusCode: 400; @body error: ApiError };
+}
+
+@route("/categories")
+namespace Categories {
+    @get
+    op list(): { @statusCode statusCode: 200; @body body: Category[] };
+}
+
 /** Единый формат ошибки для всех ресурсов API. */
 @error
 model ApiError {

@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Categories_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health": {
         parameters: {
             query?: never;
@@ -76,6 +92,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["Health_check"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Products_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -96,6 +128,12 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        Category: {
+            /** Format: int32 */
+            id: number;
+            slug: string;
+            name: string;
+        };
         HealthStatus: {
             /** @enum {string} */
             status: "ok";
@@ -110,6 +148,26 @@ export interface components {
          * @description Целая сумма в рублях, без копеек — в магазине одна валюта.
          */
         Money: number;
+        Product: {
+            /** Format: int32 */
+            id: number;
+            slug: string;
+            name: string;
+            description: string;
+            price: components["schemas"]["Money"];
+            imageUrl?: string;
+            available: boolean;
+            categorySlug: string;
+        };
+        ProductList: {
+            items: components["schemas"]["Product"][];
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            pageSize: number;
+        };
         RegisterRequest: {
             /** @description Грубая проверка вида local(собака/at)domain.tld — не полный RFC 5322, ловит только явный мусор. */
             email: string;
@@ -253,6 +311,26 @@ export interface operations {
             };
         };
     };
+    Categories_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Category"][];
+                };
+            };
+        };
+    };
     Health_check: {
         parameters: {
             query?: never;
@@ -273,6 +351,43 @@ export interface operations {
             };
             /** @description Server error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    Products_list: {
+        parameters: {
+            query?: {
+                category?: string;
+                priceMin?: components["schemas"]["Money"];
+                priceMax?: components["schemas"]["Money"];
+                available?: boolean;
+                search?: string;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductList"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
