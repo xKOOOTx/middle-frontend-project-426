@@ -127,19 +127,23 @@ const promoData: PromoSeed[] = [
 
 export const seed = async () => {
     /** Явное приведение к int заставляет Postgres вернуть обычное 4-байтовое целое, а pg тогда честно отдаёт его как настоящий JS number */
-    const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(categories);
+    const [{ categoriesCount }] = await db.select({ categoriesCount: sql<number>`count(*)::int` }).from(categories);
+    const [{ productsCount }] = await db.select({ productsCount: sql<number>`count(*)::int` }).from(products);
     const [{ promoBlocksCount }] = await db.select({ promoBlocksCount: sql<number>`count(*)::int` }).from(promoBlocks);
 
-    if (!count) {
-        const insertedCategories = await db
-            .insert(categories)
-            .values(categoriesData.map(({ slug, name }) => ({ slug, name })))
-            .returning();
+    if (!categoriesCount) {
+        await db.insert(categories).values(categoriesData.map(({ slug, name }) => ({ slug, name })));
+        console.log(`Seeded ${categoriesData.lenght} categories`);
+    } else {
+        console.log('Seed skipped: categories already exist');
+    }
 
-        /** т.к. данные (категории) захардкожены можно обойтись non-null assertion */
-        const findCategoryId = (slug: string) => insertedCategories.find((c) => c.slug === slug)!.id;
+    if (!productsCount) {
+        // категории на этот момент точно есть (только что вставлены выше либо были и раньше), достаём их из БД напрямую
+        const allCategories = await db.select().from(categories);
+        const findCategoryId = (slug: string) => allCategories.find(c => c.slug === slug)!.id;
 
-        const productsData = categoriesData.flatMap(({ slug, description, models }) =>
+        const productData = categoriesData.flatMap(({ slug, description, models }) =>
             models.map(({ name, price, available = true, hasImage = true }) => ({
                 slug: slugify(name),
                 name,
@@ -148,14 +152,13 @@ export const seed = async () => {
                 available,
                 imageUrl: hasImage ? `https://picsum.photos/seed/${slugify(name)}/400/300` : undefined,
                 categoryId: findCategoryId(slug),
-            })),
-        );
+            }))
+        )
 
-        await db.insert(products).values(productsData);
-
-        console.log(`Seeded ${categoriesData.length} categories and ${productsData.length} products`);
+        await db.insert(products).values(productData);
+        console.log(`Seeded ${productData.length} products`);
     } else {
-        console.log('Seed skipped: categories already exist')
+        console.log('Seed skipped: products already exist');
     }
 
     // выполняем после блока с категориями/товарами чтобы на холодной базе не было ошибок (дожидаемся наполнения и потом находим)
@@ -174,7 +177,6 @@ export const seed = async () => {
         }))
 
         await db.insert(promoBlocks).values(promoBlocksData);
-
         console.log(`Seeded ${promoBlocksData.length} promo blocks`);
     } else {
         console.log('Seed skipped: promo block already exist');
