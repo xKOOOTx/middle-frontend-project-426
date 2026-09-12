@@ -1,3 +1,4 @@
+DELETE FROM "products";--> statement-breakpoint
 ALTER TABLE "products" ADD COLUMN "slug" text NOT NULL;--> statement-breakpoint
 ALTER TABLE "products" ADD COLUMN "image_url" text;--> statement-breakpoint
 ALTER TABLE "products" ADD COLUMN "available" boolean DEFAULT true NOT NULL;--> statement-breakpoint
