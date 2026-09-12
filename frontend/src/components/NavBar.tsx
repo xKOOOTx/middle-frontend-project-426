@@ -1,4 +1,4 @@
-import { Flex, Button, Breadcrumb } from 'antd'
+import { Flex, Button, Breadcrumb, Divider } from 'antd'
 import type { BreadcrumbProps } from 'antd'
 import { AppstoreFilled } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext';
@@ -14,7 +14,7 @@ export const NavBar = () => {
 
     const items = [
         {
-            title: <Link to={'/'}>Каталог</Link>,
+            title: <Link to={'/'} data-testid={'nav-catalog'}>Каталог</Link>,
         },
     ]
 
@@ -38,15 +38,20 @@ export const NavBar = () => {
     }
 
     return (
-        <Flex justify="space-between" align={'center'} style={{ padding: '20px' }}>
-            <Flex gap={10} align={'center'}>
-                <AppstoreFilled />
-                Комплектующие
+        <>
+            <Flex justify="space-between" align={'center'} style={{ padding: '20px' }}>
+                <Link to={'/'}>
+                    <Flex gap={10} align={'center'}>
+                        <AppstoreFilled />
+                        Комплектующие
+                    </Flex>
+                </Link>
+                <Breadcrumb
+                    items={items}
+                    styles={styles}
+                />
             </Flex>
-            <Breadcrumb
-                items={items}
-                styles={styles}
-            />
-        </Flex>
+            <Divider />
+        </>
     )
 }

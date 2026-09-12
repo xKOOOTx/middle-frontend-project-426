@@ -12,7 +12,7 @@ export type ProductFilters = {
     pageSize?: number;
 };
 
-export const listProducts = async (filters: ProductFilters): Promise<ProductList> => {
+export const listProducts = async (filters: ProductFilters, signal?: AbortSignal): Promise<ProductList> => {
     const params = new URLSearchParams();
     if (filters.category) params.set('category', filters.category);
     if (filters.priceMin !== undefined) params.set('priceMin', String(filters.priceMin));
@@ -22,7 +22,7 @@ export const listProducts = async (filters: ProductFilters): Promise<ProductList
     if (filters.page !== undefined) params.set('page', String(filters.page));
     if (filters.pageSize !== undefined) params.set('pageSize', String(filters.pageSize));
 
-    const res = await fetch(`/api/products?${params.toString()}`, { credentials: 'same-origin' })
+    const res = await fetch(`/api/products?${params.toString()}`, { credentials: 'same-origin', signal })
 
     if(!res.ok) {
         const error: components['schemas']['ApiError'] = await res.json();
