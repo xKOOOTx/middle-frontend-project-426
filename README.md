@@ -4,6 +4,7 @@
 # Интернет-магазин комплектующих для ПК
 
 [![hexlet-check](https://github.com/xKOOOTx/middle-frontend-project-426/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/xKOOOTx/middle-frontend-project-426/actions)
+[![playwright](https://github.com/xKOOOTx/middle-frontend-project-426/actions/workflows/playwright.yml/badge.svg)](https://github.com/xKOOOTx/middle-frontend-project-426/actions)
 
 Разработайте интернет-магазин комплектующих для ПК целиком на TypeScript.
 Фронтенд пишете на любом TS-фреймворке (React, Vue, Svelte, Angular, Solid и др.).
