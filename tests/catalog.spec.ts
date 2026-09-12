@@ -28,7 +28,7 @@ test('фильтр по категории сужает список', async ({ 
     await page.goto('/');
 
     await page.getByTestId('filter-category').click();
-    await page.getByRole('option', { name: 'Материнские платы' }).click();
+    await page.locator('.ant-select-item-option', { hasText: 'Материнские платы' }).click();
 
     await expect(page).toHaveURL(/category=motherboards/);
     await expect(page.getByText('MSI PRO B760M-A', { exact: true })).toBeVisible();
@@ -49,8 +49,8 @@ test('поиск по части названия оставляет в выда
 test('фильтр по цене меняет состав выдачи', async ({ page }) => {
     await page.goto('/');
 
-    await page.getByTestId('filter-price-min').locator('input').fill('150000');
-    await page.getByTestId('filter-price-min').locator('input').press('Tab');
+    await page.getByTestId('filter-price-min').fill('150000');
+    await page.getByTestId('filter-price-min').press('Tab');
 
     await expect(page.getByText('NVIDIA GeForce RTX 4090', { exact: true })).toBeVisible();
     await expect(page.getByText('Gigabyte B760M DS3H')).not.toBeVisible();
@@ -91,7 +91,7 @@ test('смена фильтра возвращает на первую стра�
     await expect(page).toHaveURL(/page=2/);
 
     await page.getByTestId('filter-category').click();
-    await page.getByRole('option', { name: 'Процессоры' }).click();
+    await page.locator('.ant-select-item-option', { hasText: 'Процессоры' }).click();
 
     await expect(page).toHaveURL(/page=1/);
 });
@@ -110,7 +110,7 @@ test('перезагрузка страницы сохраняет выдачу 
 
     await expect(page.getByText('AMD Ryzen 5 7500F', { exact: true })).toBeVisible();
     await expect(page.getByTestId('filter-category')).toContainText('Процессоры');
-    await expect(page.getByTestId('filter-available').locator('input')).toBeChecked();
+    await expect(page.getByTestId('filter-available')).toBeChecked();
 });
 
 test('кнопка "назад" браузера возвращает предыдущую выдачу', async ({ page }) => {
@@ -118,7 +118,7 @@ test('кнопка "назад" браузера возвращает преды
     await expect(page.getByText('NVIDIA GeForce RTX 4060', { exact: true })).toBeVisible();
 
     await page.getByTestId('filter-category').click();
-    await page.getByRole('option', { name: 'Материнские платы' }).click();
+    await page.locator('.ant-select-item-option', { hasText: 'Материнские платы' }).click();
     await expect(page.getByText('MSI PRO B760M-A', { exact: true })).toBeVisible();
 
     await page.goBack();

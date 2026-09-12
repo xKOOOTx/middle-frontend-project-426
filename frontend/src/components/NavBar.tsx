@@ -43,7 +43,7 @@ export const NavBar = () => {
                 <Link to={'/'}>
                     <Flex gap={10} align={'center'}>
                         <AppstoreFilled />
-                        Комплектующие
+                        <h3>Комплектующие</h3>
                     </Flex>
                 </Link>
                 <Breadcrumb

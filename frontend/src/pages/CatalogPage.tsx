@@ -21,6 +21,7 @@ const ItemCard = ({ product }: { product: components['schemas']['Product'] }) =>
             style={{ width: 240 }}
             cover={
                 <img
+                    style={{ minHeight: 240, objectFit: 'cover' }}
                     draggable={false}
                     alt={product.categorySlug}
                     src={product.imageUrl ?? `/${product.categorySlug}.png`}
@@ -75,6 +76,16 @@ export const CatalogPage = () => {
 
     const [form] = Form.useForm();
 
+    useEffect(() => {
+        form.setFieldsValue({
+            category: searchParams.get('category') ?? '',
+            search: searchParams.get('search') ?? '',
+            priceMin: searchParams.get('priceMin') ? Number(searchParams.get('priceMin')) : undefined,
+            priceMax: searchParams.get('priceMax') ? Number(searchParams.get('priceMax')) : undefined,
+            available: searchParams.get('available') === 'true',
+        })
+    }, [searchParams, form]);
+
     const handleValuesChange = (changedValues: Record<string, unknown>, allValues: Record<string, unknown>) => {
         const applyFilters = () => {
             const params = new URLSearchParams(searchParams);
@@ -125,6 +136,7 @@ export const CatalogPage = () => {
                         <Form.Item name={'category'} label={'Категория'}>
                             <Select
                                 data-testid="filter-category"
+                                virtual={false}
                                 options={[
                                     { value: '', label: 'Все категории' },
                                     ...categories.map(category => ({
@@ -144,7 +156,7 @@ export const CatalogPage = () => {
                         <Form.Item name={'priceMax'} label={'Цена, до ₽'}>
                             <InputNumber data-testid="filter-price-max" min={0} style={{ width: '100%' }} />
                         </Form.Item>
-                        <Form.Item name={'available'}>
+                        <Form.Item name={'available'} valuePropName={'checked'}>
                             <Checkbox data-testid="filter-available">Только в наличии</Checkbox>
                         </Form.Item>
                         <Button data-testid="filter-reset" onClick={() => resetForm()}>Очистить</Button>
