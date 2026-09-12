@@ -8,14 +8,14 @@ import { test, expect } from '@playwright/test';
  */
 
 test('каталог загружается, карточки товаров видны', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
 
     await expect(page.getByTestId('catalog-list')).toBeVisible();
     await expect(page.getByTestId('catalog-item')).toHaveCount(12); // первая страница при pageSize=12
 });
 
 test('в карточке есть название, цена и доступность', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
 
     const card = page.getByTestId('catalog-item').first();
 
@@ -25,7 +25,7 @@ test('в карточке есть название, цена и доступн�
 });
 
 test('фильтр по категории сужает список', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
 
     await page.getByTestId('filter-category').click();
     await page.locator('.ant-select-item-option', { hasText: 'Материнские платы' }).click();
@@ -36,7 +36,7 @@ test('фильтр по категории сужает список', async ({ 
 });
 
 test('поиск по части названия оставляет в выдаче подходящий товар', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
 
     await page.getByTestId('filter-search').fill('Ryzen 9 7950X3D');
 
@@ -47,7 +47,7 @@ test('поиск по части названия оставляет в выда
 });
 
 test('фильтр по цене меняет состав выдачи', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
 
     await page.getByTestId('filter-price-min').fill('150000');
     await page.getByTestId('filter-price-min').press('Tab');
@@ -57,26 +57,26 @@ test('фильтр по цене меняет состав выдачи', async 
 });
 
 test('сброс фильтров возвращает полный список', async ({ page }) => {
-    await page.goto('/?category=motherboards');
+    await page.goto('/catalog?category=motherboards');
 
     await expect(page.getByTestId('catalog-pagination')).toContainText('из 2'); // 18 / 12 = 2 страницы
 
     await page.getByTestId('filter-reset').click();
 
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/catalog');
     await expect(page.getByTestId('catalog-pagination')).toContainText('из 5'); // 54 / 12 = 5 страниц
 });
 
 test('комбинация фильтров без совпадений показывает пустое состояние', async ({ page }) => {
     // у материнских плат максимальная цена в сиде 42990 — фильтр отсекает всё
-    await page.goto('/?category=motherboards&priceMin=180000');
+    await page.goto('/catalog?category=motherboards&priceMin=180000');
 
     await expect(page.getByTestId('catalog-empty')).toBeVisible();
     await expect(page.getByTestId('catalog-item')).toHaveCount(0);
 });
 
 test('переход на следующую страницу меняет набор карточек', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
 
     const firstItemOnPageOne = await page.getByTestId('catalog-item-name').first().textContent();
 
@@ -87,7 +87,7 @@ test('переход на следующую страницу меняет на�
 });
 
 test('смена фильтра возвращает на первую страницу выдачи', async ({ page }) => {
-    await page.goto('/?page=2');
+    await page.goto('/catalog?page=2');
     await expect(page).toHaveURL(/page=2/);
 
     await page.getByTestId('filter-category').click();
@@ -97,13 +97,13 @@ test('смена фильтра возвращает на первую стра�
 });
 
 test('на первой странице кнопка "назад" неактивна', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
 
     await expect(page.getByTestId('catalog-page-prev')).toBeDisabled();
 });
 
 test('перезагрузка страницы сохраняет выдачу и значения контролов', async ({ page }) => {
-    await page.goto('/?category=processors&available=true');
+    await page.goto('/catalog?category=processors&available=true');
     await expect(page.getByText('AMD Ryzen 5 7500F', { exact: true })).toBeVisible();
 
     await page.reload();
@@ -114,7 +114,7 @@ test('перезагрузка страницы сохраняет выдачу 
 });
 
 test('кнопка "назад" браузера возвращает предыдущую выдачу', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/catalog');
     await expect(page.getByText('NVIDIA GeForce RTX 4060', { exact: true })).toBeVisible();
 
     await page.getByTestId('filter-category').click();
