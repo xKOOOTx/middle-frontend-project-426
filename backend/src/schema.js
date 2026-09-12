@@ -144,7 +144,8 @@ const ComponentsSchemasPromoBlockProduct = T.Object({
   id: T.Integer({ format: 'int32' }),
   slug: T.String(),
   name: T.String(),
-  price: CloneType(ComponentsSchemasMoney)
+  price: CloneType(ComponentsSchemasMoney),
+  categorySlug: T.String()
 })
 const ComponentsSchemasPromoBlock = T.Object({
   id: T.Integer({ format: 'int32' }),

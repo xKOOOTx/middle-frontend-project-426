@@ -313,6 +313,7 @@ components:
         - slug
         - name
         - price
+        - categorySlug
       properties:
         id:
           type: integer
@@ -323,6 +324,8 @@ components:
           type: string
         price:
           $ref: '#/components/schemas/Money'
+        categorySlug:
+          type: string
     RegisterRequest:
       type: object
       required:

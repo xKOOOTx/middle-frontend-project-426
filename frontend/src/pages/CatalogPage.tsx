@@ -125,7 +125,7 @@ export const CatalogPage = () => {
     }
 
     return (
-        <Row style={{ padding: '20px'}} gutter={[20, 20]}>
+        <Row gutter={[20, 20]}>
             <Col xs={24} md={6}>
                 <Card data-testid="catalog-filters">
                     <Form

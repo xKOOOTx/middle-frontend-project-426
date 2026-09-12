@@ -122,6 +122,7 @@ model PromoBlockProduct {
     slug: string;
     name: string;
     price: Money;
+    categorySlug: string;
 }
 
 model PromoBlock {

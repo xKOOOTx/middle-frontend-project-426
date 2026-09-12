@@ -197,6 +197,7 @@ export interface components {
             slug: string;
             name: string;
             price: components["schemas"]["Money"];
+            categorySlug: string;
         };
         RegisterRequest: {
             /** @description Грубая проверка вида local(собака/at)domain.tld — не полный RFC 5322, ловит только явный мусор. */
