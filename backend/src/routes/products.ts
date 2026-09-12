@@ -93,4 +93,30 @@ productsRoute.get('/', async (c) => {
     return c.json({ items, total, page, pageSize }, 200);
 });
 
+productsRoute.get('/:slug', async (c) => {
+    const slug = c.req.param('slug');
+
+    const rows = await db
+        .select({
+            id: products.id,
+            slug: products.slug,
+            name: products.name,
+            description: products.description,
+            price: products.price,
+            imageUrl: products.imageUrl,
+            available: products.available,
+            categorySlug: categories.slug,
+        })
+        .from(products)
+        .innerJoin(categories, eq(products.categoryId, categories.id))
+        .where(eq(products.slug, slug));
+
+    const [product] = rows;
+
+    if (!product) {
+        return c.json(apiError('NOT_FOUND', 'Товар не найден'), 404);
+    }
+
+    return c.json({ ...product, imageUrl: product.imageUrl ?? undefined}, 200);
+})
 export { productsRoute };
