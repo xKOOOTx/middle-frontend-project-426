@@ -109,6 +109,12 @@ namespace Products {
     ):
     | { @statusCode statusCode: 200; @body body: ProductList }
     | { @statusCode statusCode: 400; @body error: ApiError };
+
+    @route("/{slug}")
+    @get
+    op get(@path slug: string):
+        | { @statusCode statusCode: 200; @body body: Product }
+        | { @statusCode statusCode: 404; @body error: ApiError };
 }
 
 @route("/categories")

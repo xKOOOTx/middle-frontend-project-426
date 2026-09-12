@@ -279,6 +279,25 @@ const schema = {
       ])
     }
   },
+  '/api/products/{slug}': {
+    GET: {
+      args: T.Object({
+        params: T.Object({
+          slug: T.String({ 'x-in': 'path' })
+        })
+      }),
+      data: CloneType(ComponentsSchemasProduct, {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([
+        CloneType(ComponentsSchemasApiError, {
+          'x-status-code': '404',
+          'x-content-type': 'application/json'
+        })
+      ])
+    }
+  },
   '/api/promo': {
     GET: {
       args: T.Void(),
