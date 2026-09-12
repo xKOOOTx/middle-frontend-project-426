@@ -11,6 +11,7 @@ import { NavBar } from './components/NavBar.tsx'
 import { AuthForm } from './pages/AuthForm.tsx'
 import { CatalogPage } from './pages/CatalogPage.tsx'
 import { PromoPage } from './pages/PromoPage.tsx'
+import { ProductPage } from './pages/ProductPage'
 
 const { Header, Content, Footer } = Layout;
 
@@ -32,9 +33,10 @@ createRoot(document.getElementById('root')!).render(
                 <Header style={{ background: '#fff', height: 'auto', padding: 0, lineHeight: 'normal' }}>
                     <NavBar />
                 </Header>
-                <Content style={{ background: '#fff', padding: '0 50px', margin: '16px 0' }}>
+                <Content style={{ background: '#fff', margin: '16px 0' }}>
                         <Routes>
                             <Route path={'/'} element={<PromoPage />} />
+                            <Route path="/products/:slug" element={<ProductPage />} />
                             <Route path="/catalog" element={<CatalogPage />} />
                             <Route path="/account" element={<ProtectedRoute><div>Личный кабинет (скоро)</div></ProtectedRoute>} />
                             <Route path="/signup" element={<AuthForm mode={'register'} />} />

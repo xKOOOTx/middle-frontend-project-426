@@ -31,3 +31,14 @@ export const listProducts = async (filters: ProductFilters, signal?: AbortSignal
 
     return res.json();
 }
+
+export const getProduct = async (slug: string): Promise<components['schemas']['Product']> => {
+    const res = await fetch(`/api/products/${slug}`, { credentials: 'same-origin' });
+
+    if (!res.ok) {
+        const error: components['schemas']['ApiError'] = await res.json();
+        throw new Error(error.message);
+    }
+
+    return res.json();
+}
