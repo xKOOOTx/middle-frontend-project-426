@@ -133,7 +133,7 @@ export const seed = async () => {
 
     if (!categoriesCount) {
         await db.insert(categories).values(categoriesData.map(({ slug, name }) => ({ slug, name })));
-        console.log(`Seeded ${categoriesData.lenght} categories`);
+        console.log(`Seeded ${categoriesData.length} categories`);
     } else {
         console.log('Seed skipped: categories already exist');
     }
