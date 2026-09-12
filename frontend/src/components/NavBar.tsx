@@ -24,7 +24,7 @@ export const NavBar = () => {
                     </Link>
                     <Link to={'/cart'} data-testid={'nav-cart'}>
                         <Badge color={'blue'} count={items.length}>
-                            <Button>
+                            <Button type={'text'}>
                                 Корзина
                             </Button>
                         </Badge>
