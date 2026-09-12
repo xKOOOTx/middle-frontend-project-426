@@ -171,6 +171,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /api/promo:
+    get:
+      operationId: Promo_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PromoBlock'
 components:
   schemas:
     ApiError:
@@ -276,6 +289,40 @@ components:
         pageSize:
           type: integer
           format: int32
+    PromoBlock:
+      type: object
+      required:
+        - id
+        - title
+        - text
+        - product
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        text:
+          type: string
+        product:
+          $ref: '#/components/schemas/PromoBlockProduct'
+    PromoBlockProduct:
+      type: object
+      required:
+        - id
+        - slug
+        - name
+        - price
+      properties:
+        id:
+          type: integer
+          format: int32
+        slug:
+          type: string
+        name:
+          type: string
+        price:
+          $ref: '#/components/schemas/Money'
     RegisterRequest:
       type: object
       required:

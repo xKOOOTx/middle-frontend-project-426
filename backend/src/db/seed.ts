@@ -1,6 +1,6 @@
 import { db } from './index.js';
-import { categories, products } from './schema.js';
-import { sql } from 'drizzle-orm';
+import { categories, products, promoBlocks } from './schema.js';
+import { sql, inArray } from 'drizzle-orm';
 
 const slugify = (value: string) =>
     value
@@ -21,6 +21,12 @@ type CategorySeed = {
     description: (name: string) => string;
     models: ProductSeed[];
 };
+
+type PromoSeed = {
+    title: string;
+    text: string;
+    productSlug: string;
+}
 
 const categoriesData: CategorySeed[] = [
     {
@@ -101,35 +107,78 @@ const categoriesData: CategorySeed[] = [
     },
 ];
 
+const promoData: PromoSeed[] = [
+    {
+        title: 'Игровая сборка на RTX 4070',
+        text: '12 ГБ памяти и уверенный запас на 1440p без переплаты за топ линейки',
+        productSlug: 'nvidia-geforce-rtx-4070'
+    },
+    {
+        title: 'Процессор для игр',
+        text: '3D V-Cache даёт прирост там, где частота уже не помогает',
+        productSlug: 'amd-ryzen-7-7800x3d'
+    },
+    {
+        title: 'Плата с запасом на будущее',
+        text: 'Надёжное питание и апрейг без замены платформы',
+        productSlug: 'msi-mag-b760-tomahawk'
+    },
+]
+
 export const seed = async () => {
     /** Явное приведение к int заставляет Postgres вернуть обычное 4-байтовое целое, а pg тогда честно отдаёт его как настоящий JS number */
     const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(categories);
-    if (count > 0) {
-        console.log('Seed skipped: categories already exist');
-        return;
+    const [{ promoBlocksCount }] = await db.select({ promoBlocksCount: sql<number>`count(*)::int` }).from(promoBlocks);
+
+    if (!count) {
+        const insertedCategories = await db
+            .insert(categories)
+            .values(categoriesData.map(({ slug, name }) => ({ slug, name })))
+            .returning();
+
+        /** т.к. данные (категории) захардкожены можно обойтись non-null assertion */
+        const findCategoryId = (slug: string) => insertedCategories.find((c) => c.slug === slug)!.id;
+
+        const productsData = categoriesData.flatMap(({ slug, description, models }) =>
+            models.map(({ name, price, available = true, hasImage = true }) => ({
+                slug: slugify(name),
+                name,
+                description: description(name),
+                price,
+                available,
+                imageUrl: hasImage ? `https://picsum.photos/seed/${slugify(name)}/400/300` : undefined,
+                categoryId: findCategoryId(slug),
+            })),
+        );
+
+        await db.insert(products).values(productsData);
+
+        console.log(`Seeded ${categoriesData.length} categories and ${productsData.length} products`);
+    } else {
+        console.log('Seed skipped: categories already exist')
     }
 
-    const insertedCategories = await db
-        .insert(categories)
-        .values(categoriesData.map(({ slug, name }) => ({ slug, name })))
-        .returning();
+    // выполняем после блока с категориями/товарами чтобы на холодной базе не было ошибок (дожидаемся наполнения и потом находим)
+    if (!promoBlocksCount) {
+        const promoProducts = await db
+            .select({ id: products.id, slug: products.slug })
+            .from(products)
+            .where(inArray(products.slug, promoData.map(p => p.productSlug)))
 
-    /** т.к. данные (категории) захардкожены можно обойтись non-null assertion */
-    const findCategoryId = (slug: string) => insertedCategories.find((c) => c.slug === slug)!.id;
+        const findProductId = (slug: string) => promoProducts.find(p => p.slug === slug)!.id;
 
-    const productsData = categoriesData.flatMap(({ slug, description, models }) =>
-        models.map(({ name, price, available = true, hasImage = true }) => ({
-            slug: slugify(name),
-            name,
-            description: description(name),
-            price,
-            available,
-            imageUrl: hasImage ? `https://picsum.photos/seed/${slugify(name)}/400/300` : undefined,
-            categoryId: findCategoryId(slug),
-        })),
-    );
+        const promoBlocksData = promoData.map(({ title, text, productSlug }) => ({
+            title,
+            text,
+            productId: findProductId(productSlug),
+        }))
 
-    await db.insert(products).values(productsData);
+        await db.insert(promoBlocks).values(promoBlocksData);
 
-    console.log(`Seeded ${categoriesData.length} categories and ${productsData.length} products`);
+        console.log(`Seeded ${promoBlocksData.length} promo blocks`);
+    } else {
+        console.log('Seed skipped: promo block already exist');
+    }
+
+
 };

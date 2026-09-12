@@ -140,6 +140,18 @@ const ComponentsSchemasProductList = T.Object({
   page: T.Integer({ format: 'int32' }),
   pageSize: T.Integer({ format: 'int32' })
 })
+const ComponentsSchemasPromoBlockProduct = T.Object({
+  id: T.Integer({ format: 'int32' }),
+  slug: T.String(),
+  name: T.String(),
+  price: CloneType(ComponentsSchemasMoney)
+})
+const ComponentsSchemasPromoBlock = T.Object({
+  id: T.Integer({ format: 'int32' }),
+  title: T.String(),
+  text: T.String(),
+  product: CloneType(ComponentsSchemasPromoBlockProduct)
+})
 
 const schema = {
   '/api/auth/login': {
@@ -265,6 +277,16 @@ const schema = {
         })
       ])
     }
+  },
+  '/api/promo': {
+    GET: {
+      args: T.Void(),
+      data: T.Array(CloneType(ComponentsSchemasPromoBlock), {
+        'x-status-code': '200',
+        'x-content-type': 'application/json'
+      }),
+      error: T.Union([T.Any({ 'x-status-code': 'default' })])
+    }
   }
 }
 
@@ -277,6 +299,8 @@ const _components = {
     Money: CloneType(ComponentsSchemasMoney, { 'x-in': 'query' }),
     Product: CloneType(ComponentsSchemasProduct),
     ProductList: CloneType(ComponentsSchemasProductList),
+    PromoBlock: CloneType(ComponentsSchemasPromoBlock),
+    PromoBlockProduct: CloneType(ComponentsSchemasPromoBlockProduct),
     RegisterRequest: CloneType(ComponentsSchemasRegisterRequest),
     User: CloneType(ComponentsSchemasUser)
   }

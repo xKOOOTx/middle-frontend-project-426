@@ -37,3 +37,12 @@ export const products = pgTable('products', {
 }, (table) => ({
     slugId: uniqueIndex('products_slug_idx').on(table.slug)
 }));
+
+export const promoBlocks = pgTable('promo_blocks', {
+    id: serial('id').primaryKey(),
+    title: text('title').notNull(),
+    text: text('text').notNull(),
+    productId: integer('product_id').notNull().references(() => products.id),
+}, (table) => ({
+    productIdIdx: uniqueIndex('promo_blocks_product_id_idx').on(table.productId)
+}))

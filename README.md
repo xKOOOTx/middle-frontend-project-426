@@ -106,3 +106,8 @@ cd middle-frontend-project-426
     docker compose ps            # проверить, что контейнер жив
     docker compose logs -f db    # логи базы
 ```
+
+### дополнительные команды
+```bash
+kill $(lsof -t -i :3000)         # убить процессы (сервер)
+```

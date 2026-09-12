@@ -116,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/promo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Promo_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -167,6 +183,20 @@ export interface components {
             page: number;
             /** Format: int32 */
             pageSize: number;
+        };
+        PromoBlock: {
+            /** Format: int32 */
+            id: number;
+            title: string;
+            text: string;
+            product: components["schemas"]["PromoBlockProduct"];
+        };
+        PromoBlockProduct: {
+            /** Format: int32 */
+            id: number;
+            slug: string;
+            name: string;
+            price: components["schemas"]["Money"];
         };
         RegisterRequest: {
             /** @description Грубая проверка вида local(собака/at)domain.tld — не полный RFC 5322, ловит только явный мусор. */
@@ -393,6 +423,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    Promo_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PromoBlock"][];
                 };
             };
         };

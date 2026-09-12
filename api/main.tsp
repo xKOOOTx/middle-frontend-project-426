@@ -117,6 +117,26 @@ namespace Categories {
     op list(): { @statusCode statusCode: 200; @body body: Category[] };
 }
 
+model PromoBlockProduct {
+    id: int32;
+    slug: string;
+    name: string;
+    price: Money;
+}
+
+model PromoBlock {
+    id: int32;
+    title: string;
+    text: string;
+    product: PromoBlockProduct;
+}
+
+@route("/promo")
+namespace Promo {
+    @get
+    op list(): { @statusCode statusCode: 200; @body body: PromoBlock[] };
+}
+
 /** Единый формат ошибки для всех ресурсов API. */
 @error
 model ApiError {

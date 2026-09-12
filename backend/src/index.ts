@@ -5,10 +5,11 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { db } from './db/index.js';
 import { seed } from './db/seed.js'
 import * as Sentry from '@sentry/node';
-import { join } from 'node:path'
-import { auth } from './routes/auth.js'
-import { productsRoute } from './routes/products.js'
-import { categoriesRoute } from './routes/categories.js'
+import { join } from 'node:path';
+import { auth } from './routes/auth.js';
+import { productsRoute } from './routes/products.js';
+import { categoriesRoute } from './routes/categories.js';
+import { promoRoute } from './routes/promo.js';
 
 Sentry.init({
     dsn: process.env.SENTRY_DSN,
@@ -29,6 +30,7 @@ api.get('/health', (c) => c.json({ status: 'ok' }));
 api.route('/auth', auth)
 api.route('/products', productsRoute)
 api.route('/categories', categoriesRoute)
+api.route('/promo', promoRoute)
 
 /** --- вставляем новые роуты до этой строки --- */
 
