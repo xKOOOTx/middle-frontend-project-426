@@ -6,12 +6,14 @@ import { Flex, Layout } from 'antd'
 
 import * as Sentry from "@sentry/react";
 import { AuthProvider } from './context/AuthContext.tsx'
+import { CartProvider } from './context/CartContext.tsx'
 import { ProtectedRoute } from './components/ProtectedRoute.tsx'
 import { NavBar } from './components/NavBar.tsx'
 import { AuthForm } from './pages/AuthForm.tsx'
 import { CatalogPage } from './pages/CatalogPage.tsx'
 import { PromoPage } from './pages/PromoPage.tsx'
 import { ProductPage } from './pages/ProductPage'
+import { CartPage } from './pages/CartPage'
 
 const { Header, Content, Footer } = Layout;
 
@@ -28,12 +30,13 @@ Sentry.init({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-        <AuthProvider>
-            <Layout style={{ minHeight: '100vh', background: '#fff' }}>
-                <Header style={{ background: '#fff', height: 'auto', padding: 0, lineHeight: 'normal' }}>
-                    <NavBar />
-                </Header>
-                <Content style={{ background: '#fff', margin: '16px 0' }}>
+        <CartProvider>
+            <AuthProvider>
+                <Layout style={{ minHeight: '100vh', background: '#fff' }}>
+                    <Header style={{ background: '#fff', height: 'auto', padding: 0, lineHeight: 'normal' }}>
+                        <NavBar />
+                    </Header>
+                    <Content style={{ background: '#fff', margin: '16px 0' }}>
                         <Routes>
                             <Route path={'/'} element={<PromoPage />} />
                             <Route path="/products/:slug" element={<ProductPage />} />
@@ -41,17 +44,18 @@ createRoot(document.getElementById('root')!).render(
                             <Route path="/account" element={<ProtectedRoute><div>Личный кабинет (скоро)</div></ProtectedRoute>} />
                             <Route path="/signup" element={<AuthForm mode={'register'} />} />
                             <Route path="/signin" element={<AuthForm mode={'login'} />} />
+                            <Route path="/cart" element={<CartPage />} />
                         </Routes>
-                </Content>
-                <Footer style={{ background: '#fff' }}>
+                    </Content>
+                    <Footer style={{ background: '#fff' }}>
                         <Flex justify={'space-between'}>
                             <p>Магазин комплектующих для ПК — учебный проект Хекслета</p>
                             <Link to={'/catalog'} style={{color: '#9AA0A6'}}>Каталог</Link>
                         </Flex>
-                </Footer>
-            </Layout>
-
-        </AuthProvider>
+                    </Footer>
+                </Layout>
+            </AuthProvider>
+        </CartProvider>
     </BrowserRouter>
   </StrictMode>,
 )

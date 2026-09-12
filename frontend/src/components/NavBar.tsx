@@ -1,11 +1,13 @@
-import { Flex, Button, Divider } from 'antd'
+import { Flex, Button, Divider, Badge } from 'antd'
 import { AppstoreFilled } from '@ant-design/icons'
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router'
+import { useCart } from '../context/CartContext'
 
 export const NavBar = () => {
 
     const { user, logout } = useAuth();
+    const { items } = useCart();
 
     return (
         <>
@@ -19,6 +21,13 @@ export const NavBar = () => {
                 <Flex justify={'space-between'} align={'center'}>
                     <Link to={'/catalog'} data-testid={'nav-catalog'}>
                         <Button type={'text'}>Каталог</Button>
+                    </Link>
+                    <Link to={'/cart'} data-testid={'nav-cart'}>
+                        <Badge color={'blue'} count={items.length}>
+                            <Button>
+                                Корзина
+                            </Button>
+                        </Badge>
                     </Link>
                     {!user && (
                         <>

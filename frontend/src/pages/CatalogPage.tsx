@@ -1,9 +1,11 @@
 import { Flex, Row, Col, Card, Form, Input, InputNumber, Select, Checkbox, Button, Empty, Space, Tag } from 'antd'
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { listCategories } from '../api/categories'
 import { listProducts, type ProductFilters } from '../api/products'
 import { useEffect, useState, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router'
 import type { components } from '../types/api'
+import { useCart } from '../context/CartContext'
 
 type ProductsList = components['schemas']['ProductList'];
 type Category = components['schemas']['Category'];
@@ -12,6 +14,17 @@ const { Meta } = Card;
 
 const ItemCard = ({ product }: { product: components['schemas']['Product'] }) => {
     if (!product) return;
+
+    const { items, addItem, setQty, removeItem } = useCart();
+    const cartItem = items.find((item) => item.productId === product.id);
+    const handleDecrease = () => {
+        if (!cartItem) return;
+        if (cartItem.qty <= 1) {
+            removeItem(product.id);
+        } else {
+            setQty(product.id, cartItem.qty - 1);
+        }
+    }
 
     return (
         <Card
@@ -36,7 +49,23 @@ const ItemCard = ({ product }: { product: components['schemas']['Product'] }) =>
                 <span data-testid={'catalog-item-price'}>{product.price.toLocaleString('ru-RU')} ₽</span>
                 <Tag data-testid={'catalog-item-availability'} data-available={String(product.available)} color={product.available ? 'green' : 'red'} variant={'solid'}>{product.available ? 'В наличии' : 'Нет в наличии'}</Tag>
             </Flex>
-            <Button disabled={!product.available} color={'primary'} variant={'filled'} style={{ width: '100%' }}>В корзину</Button>
+            {cartItem ? (
+                <Flex align={'center'} justify={'space-between'}>
+                    <Button size={'small'} icon={<MinusOutlined />} onClick={handleDecrease} />
+                    <span>{cartItem.qty}</span>
+                    <Button size={'small'} icon={<PlusOutlined />} onClick={() => setQty(product.id, cartItem.qty + 1)} />
+                </Flex>
+            ) : (
+                <Button
+                    disabled={!product.available}
+                    color={'primary'}
+                    variant={'filled'}
+                    style={{ width: '100%' }}
+                    onClick={() => addItem(product.id)}
+                >
+                    В корзину
+                </Button>
+            )}
         </Card>
     )
 }
@@ -144,7 +173,6 @@ export const CatalogPage = () => {
                                         label: category.name,
                                     }))
                                 ]}
-                                allowClear
                             />
                         </Form.Item>
                         <Form.Item name={'search'} label={'Название'}>

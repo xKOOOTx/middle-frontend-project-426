@@ -2,12 +2,16 @@ import { useParams, Link } from 'react-router';
 import { useState, useEffect } from 'react';
 import { getProduct } from '../api/products';
 import type { components } from '../types/api';
-import { Image, Row, Col, Tag, Card, Button, Empty } from 'antd';
+import { Image, Row, Col, Tag, Card, Button, Empty, Flex } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { useCart } from '../context/CartContext'
 
 export const ProductPage = () => {
     const { slug } = useParams<{ slug: string }>();
     const [product, setProduct] = useState<components['schemas']['Product'] | null>(null);
     const [notFound, setNotFound] = useState(false);
+
+    const { items, addItem, setQty, removeItem } = useCart();
 
     useEffect(() => {
         if (!slug) return
@@ -24,6 +28,17 @@ export const ProductPage = () => {
         )
     };
     if (!product) return;
+
+    const cartItem = items.find((item) => item.productId === product.id);
+
+    const handleDecrease = () => {
+        if (!cartItem) return;
+        if (cartItem.qty <= 1) {
+            removeItem(product.id);
+        } else {
+            setQty(product.id, cartItem.qty - 1);
+        }
+    }
     return (
         <>
             <Row justify={'space-between'} align={'top'} gutter={[16, 16]}>
@@ -35,7 +50,7 @@ export const ProductPage = () => {
                     />
                 </Col>
                 <Col span={12}>
-                    <h1 style={{marginTop: 0}}>{product.name}</h1>
+                    <h1 style={{marginTop: 0}} data-testid={'product-name'}>{product.name}</h1>
                     <Tag
                         color={product.available ? 'green' : 'red'}
                         variant={'solid'}
@@ -43,10 +58,27 @@ export const ProductPage = () => {
                     >
                         {product.available ? 'В наличии' : 'Нет в наличии'}
                     </Tag>
-                    <p>{product.description}</p>
+                    <p data-testid={'product-description'}>{product.description}</p>
                     <Card style={{margin: '20px 0'}}>
-                        <h2>{product.price.toLocaleString('ru-RU')} ₽</h2>
-                        <Button disabled={!product.available} color={'primary'} variant={'solid'} style={{width: '100%'}}>В корзину</Button>
+                        <h2 data-testid={'product-price'}>{product.price.toLocaleString('ru-RU')} ₽</h2>
+                        {cartItem ? (
+                            <Flex align={'center'} justify={'space-between'}>
+                                <Button icon={<MinusOutlined />} onClick={handleDecrease} />
+                                <span>{cartItem.qty}</span>
+                                <Button icon={<PlusOutlined />} onClick={() => setQty(product.id, cartItem.qty + 1)} />
+                            </Flex>
+                        ) : (
+                            <Button
+                                data-testid={'product-add-to-cart'}
+                                disabled={!product.available}
+                                color={'primary'}
+                                variant={'solid'}
+                                style={{width: '100%'}}
+                                onClick={() => { addItem(product.id) }}
+                            >
+                                В корзину
+                            </Button>
+                        )}
                     </Card>
                     <ul>
                         <li>Цена указана в рублях, без копеек</li>
