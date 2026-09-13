@@ -146,6 +146,7 @@ namespace Promo {
 
 model OrderItemInput {
     productId: int32;
+    @minValue(1)
     qty: int32;
 }
 model OrderItemCheck {
@@ -164,6 +165,7 @@ model OrderItem {
     productId?: int32;
     name: string;
     price: Money;
+    @minValue(1)
     qty: int32;
 }
 model Order {

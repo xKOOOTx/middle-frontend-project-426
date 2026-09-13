@@ -128,7 +128,7 @@ const ComponentsSchemasOrderItem = T.Object({
   productId: T.Optional(T.Integer({ format: 'int32' })),
   name: T.String(),
   price: CloneType(ComponentsSchemasMoney),
-  qty: T.Integer({ format: 'int32' })
+  qty: T.Integer({ format: 'int32', minimum: 1 })
 })
 const ComponentsSchemasOrder = T.Object({
   id: T.Integer({ format: 'int32' }),
@@ -143,7 +143,7 @@ const ComponentsSchemasOrder = T.Object({
 })
 const ComponentsSchemasOrderItemInput = T.Object({
   productId: T.Integer({ format: 'int32' }),
-  qty: T.Integer({ format: 'int32' })
+  qty: T.Integer({ format: 'int32', minimum: 1 })
 })
 const ComponentsSchemasCreateOrderRequest = T.Object({
   items: T.Array(CloneType(ComponentsSchemasOrderItemInput)),

@@ -10,6 +10,7 @@ import { auth } from './routes/auth.js';
 import { productsRoute } from './routes/products.js';
 import { categoriesRoute } from './routes/categories.js';
 import { promoRoute } from './routes/promo.js';
+import { ordersRoute } from './routes/orders.js';
 
 Sentry.init({
     dsn: process.env.SENTRY_DSN,
@@ -31,6 +32,7 @@ api.route('/auth', auth)
 api.route('/products', productsRoute)
 api.route('/categories', categoriesRoute)
 api.route('/promo', promoRoute)
+api.route('/orders', ordersRoute)
 
 /** --- вставляем новые роуты до этой строки --- */
 

@@ -417,6 +417,7 @@ components:
         qty:
           type: integer
           format: int32
+          minimum: 1
     OrderItemCheck:
       type: object
       required:
@@ -445,6 +446,7 @@ components:
         qty:
           type: integer
           format: int32
+          minimum: 1
     Product:
       type: object
       required:

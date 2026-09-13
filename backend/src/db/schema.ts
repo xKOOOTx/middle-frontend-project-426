@@ -45,4 +45,26 @@ export const promoBlocks = pgTable('promo_blocks', {
     productId: integer('product_id').notNull().references(() => products.id),
 }, (table) => ({
     productIdIdx: uniqueIndex('promo_blocks_product_id_idx').on(table.productId)
-}))
+}));
+
+export const orders = pgTable('orders', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').notNull().references(() => users.id),
+    method: text('method').notNull(),
+    recipientName: text('recipient_name').notNull(),
+    phone: text('phone').notNull(),
+    address: text('address'),
+    status: text('status').notNull().default('paid'),
+    total: integer('total').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const orderItems = pgTable('order_items', {
+    id: serial('id').primaryKey(),
+    orderId: integer('order_id').notNull().references(() => orders.id),
+    // Без { onDelete: 'set null' } удаление товара из каталога просто упадёт с ошибкой внешнего ключа
+    productId: integer('product_id').references(() => products.id, { onDelete: 'set null' }),
+    name: text('name').notNull(),
+    price: integer('price').notNull(),
+    qty: integer('qty').notNull(),
+})
