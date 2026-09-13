@@ -27,8 +27,7 @@ test('в карточке есть название, цена и доступн�
 test('фильтр по категории сужает список', async ({ page }) => {
     await page.goto('/catalog');
 
-    await page.getByTestId('filter-category').click();
-    await page.locator('.ant-select-item-option', { hasText: 'Материнские платы' }).click();
+    await page.getByTestId('filter-category').selectOption('motherboards');
 
     await expect(page).toHaveURL(/category=motherboards/);
     await expect(page.getByText('MSI PRO B760M-A', { exact: true })).toBeVisible();
@@ -92,8 +91,7 @@ test('смена фильтра возвращает на первую стра�
     await page.goto('/catalog?page=2');
     await expect(page).toHaveURL(/page=2/);
 
-    await page.getByTestId('filter-category').click();
-    await page.locator('.ant-select-item-option', { hasText: 'Процессоры' }).click();
+    await page.getByTestId('filter-category').selectOption('processors');
 
     await expect(page).toHaveURL(/page=1/);
 });
@@ -111,7 +109,7 @@ test('перезагрузка страницы сохраняет выдачу 
     await page.reload();
 
     await expect(page.getByText('AMD Ryzen 5 7500F', { exact: true })).toBeVisible();
-    await expect(page.getByTestId('filter-category')).toContainText('Процессоры');
+    await expect(page.getByTestId('filter-category')).toHaveValue('processors');
     await expect(page.getByTestId('filter-available')).toBeChecked();
 });
 
@@ -119,8 +117,7 @@ test('кнопка "назад" браузера возвращает преды
     await page.goto('/catalog');
     await expect(page.getByText('NVIDIA GeForce RTX 4060', { exact: true })).toBeVisible();
 
-    await page.getByTestId('filter-category').click();
-    await page.locator('.ant-select-item-option', { hasText: 'Материнские платы' }).click();
+    await page.getByTestId('filter-category').selectOption('motherboards');
     await expect(page.getByText('MSI PRO B760M-A', { exact: true })).toBeVisible();
 
     await page.goBack();

@@ -82,8 +82,7 @@ test('при доставке адрес обязателен, при самов
     // по умолчанию — самовывоз, поля адреса нет вовсе
     await expect(page.getByTestId('checkout-address')).not.toBeVisible();
 
-    await page.getByTestId('checkout-method').click();
-    await page.locator('.ant-select-item-option', { hasText: 'Доставка' }).click();
+    await page.getByTestId('checkout-method').selectOption('delivery');
     await expect(page.getByTestId('checkout-address')).toBeVisible();
 
     await fillRecipient(page);

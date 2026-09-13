@@ -1,4 +1,4 @@
-import { Flex, Row, Col, Card, Form, Input, InputNumber, Select, Checkbox, Button, Space, Tag, Pagination } from 'antd'
+import { Flex, Row, Col, Card, Form, Input, InputNumber, Checkbox, Button, Space, Tag, Pagination } from 'antd'
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { listCategories } from '../api/categories'
 import { listProducts, type ProductFilters } from '../api/products'
@@ -169,17 +169,15 @@ export const CatalogPage = () => {
                         onValuesChange={handleValuesChange}
                     >
                         <Form.Item name={'category'} label={'Категория'}>
-                            <Select
+                            <select
                                 data-testid="filter-category"
-                                virtual={false}
-                                options={[
-                                    { value: '', label: 'Все категории' },
-                                    ...categories.map(category => ({
-                                        value: category.slug,
-                                        label: category.name,
-                                    }))
-                                ]}
-                            />
+                                style={{ width: '100%', height: 32, padding: '4px 11px', borderRadius: 6, border: '1px solid #d9d9d9', fontSize: 14 }}
+                            >
+                                <option value={''}>Все категории</option>
+                                {categories.map(category => (
+                                    <option key={category.slug} value={category.slug}>{category.name}</option>
+                                ))}
+                            </select>
                         </Form.Item>
                         <Form.Item name={'search'} label={'Название'}>
                             <Input data-testid="filter-search" allowClear />

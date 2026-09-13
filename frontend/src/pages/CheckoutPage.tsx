@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Link, useNavigate } from 'react-router';
-import { Form, Input, Select, Button, Alert, Card, Row, Col, Tag, Avatar, Flex, Divider } from 'antd';
+import { Form, Input, Button, Alert, Card, Row, Col, Tag, Avatar, Flex, Divider } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import { useCart } from '../context/CartContext';
 import { createOrder, OrderApiError } from '../api/orders';
@@ -172,13 +172,13 @@ export const CheckoutPage = () => {
                             initialValues={{ method: 'pickup' }}
                         >
                             <Form.Item name={'method'} label={'Способ получения'}>
-                                <Select
+                                <select
                                     data-testid={'checkout-method'}
-                                    options={[
-                                        { value: 'delivery', label: 'Доставка' },
-                                        { value: 'pickup', label: 'Самовывоз' },
-                                    ]}
-                                />
+                                    style={{ width: '100%', height: 32, padding: '4px 11px', borderRadius: 6, border: '1px solid #d9d9d9', fontSize: 14 }}
+                                >
+                                    <option value={'delivery'}>Доставка</option>
+                                    <option value={'pickup'}>Самовывоз</option>
+                                </select>
                             </Form.Item>
                             <Form.Item name={'recipientName'} label={'Имя получателя'} rules={[{ required: true }]}>
                                 <Input data-testid={'checkout-name'} />
