@@ -100,6 +100,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Orders_list"];
+        put?: never;
+        post: operations["Orders_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Orders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/products": {
         parameters: {
             query?: never;
@@ -166,6 +198,14 @@ export interface components {
             slug: string;
             name: string;
         };
+        CreateOrderRequest: {
+            items: components["schemas"]["OrderItemInput"][];
+            /** @enum {string} */
+            method: "delivery" | "pickup";
+            recipientName: string;
+            phone: string;
+            address?: string;
+        };
         HealthStatus: {
             /** @enum {string} */
             status: "ok";
@@ -180,6 +220,42 @@ export interface components {
          * @description Целая сумма в рублях, без копеек — в магазине одна валюта.
          */
         Money: number;
+        Order: {
+            /** Format: int32 */
+            id: number;
+            /** @enum {string} */
+            method: "delivery" | "pickup";
+            recipientName: string;
+            phone: string;
+            address?: string;
+            /** @enum {string} */
+            status: "paid";
+            total: components["schemas"]["Money"];
+            /** Format: date-time */
+            createdAt: string;
+            items: components["schemas"]["OrderItem"][];
+        };
+        OrderItem: {
+            /** Format: int32 */
+            productId?: number;
+            name: string;
+            price: components["schemas"]["Money"];
+            /** Format: int32 */
+            qty: number;
+        };
+        OrderItemCheck: {
+            /** Format: int32 */
+            productId: number;
+            valid: boolean;
+            /** @enum {string} */
+            reason?: "not_found" | "unavailable";
+        };
+        OrderItemInput: {
+            /** Format: int32 */
+            productId: number;
+            /** Format: int32 */
+            qty: number;
+        };
         Product: {
             /** Format: int32 */
             id: number;
@@ -398,6 +474,117 @@ export interface operations {
             };
             /** @description Server error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    Orders_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    Orders_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded and a new resource has been created as a result. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    Orders_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

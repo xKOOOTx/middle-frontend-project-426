@@ -144,6 +144,61 @@ namespace Promo {
     op list(): { @statusCode statusCode: 200; @body body: PromoBlock[] };
 }
 
+model OrderItemInput {
+    productId: int32;
+    qty: int32;
+}
+model OrderItemCheck {
+    productId: int32;
+    valid: boolean;
+    reason?: "not_found" | "unavailable"
+}
+model CreateOrderRequest {
+    items: OrderItemInput[];
+    method: "delivery" | "pickup";
+    recipientName: string;
+    phone: string;
+    address?: string;
+}
+model OrderItem {
+    productId?: int32;
+    name: string;
+    price: Money;
+    qty: int32;
+}
+model Order {
+    id: int32;
+    method: "delivery" | "pickup";
+    recipientName: string;
+    phone: string;
+    address?: string;
+    status: "paid";
+    total: Money;
+    createdAt: utcDateTime;
+    items: OrderItem[];
+}
+
+@route("/orders")
+namespace Orders {
+    @post
+    op create(@body body: CreateOrderRequest):
+    | { @statusCode statusCode: 201; @body body: Order }
+    | { @statusCode statusCode: 400; @body error: ApiError }
+    | { @statusCode statusCode: 401; @body error: ApiError };
+
+    @get
+    op list():
+    | { @statusCode statusCode: 200; @body body: Order[] }
+    | { @statusCode statusCode: 401; @body error: ApiError };
+
+    @route("/{id}")
+    @get
+    op get(@path id: int32):
+    | { @statusCode statusCode: 200; @body body: Order }
+    | { @statusCode statusCode: 401; @body error: ApiError }
+    | { @statusCode statusCode: 404; @body error: ApiError };
+}
+
 /** Единый формат ошибки для всех ресурсов API. */
 @error
 model ApiError {
