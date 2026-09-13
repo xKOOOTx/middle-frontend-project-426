@@ -14,9 +14,9 @@ type Category = components['schemas']['Category'];
 const { Meta } = Card;
 
 const ItemCard = ({ product }: { product: components['schemas']['Product'] }) => {
+    const { items, addItem, setQty, removeItem } = useCart();
     if (!product) return;
 
-    const { items, addItem, setQty, removeItem } = useCart();
     const cartItem = items.find((item) => item.productId === product.id);
     const handleDecrease = () => {
         if (!cartItem) return;
