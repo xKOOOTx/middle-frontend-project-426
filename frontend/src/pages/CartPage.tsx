@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router'
 import { Row, Col, Card, Empty, Divider, Button, Image, Flex, InputNumber, Tag } from 'antd'
 import { listProducts } from '../api/products'
 import type { components } from '../types/api'
@@ -63,7 +64,8 @@ const ItemCard = ({item, products, setQty, removeItem}: TItemCard) => {
 }
 export const CartPage = () => {
 
-    const [products, setProducts] = useState<ProductList | null>(null)
+    const navigate = useNavigate();
+    const [products, setProducts] = useState<ProductList | null>(null);
     const { items, setQty, removeItem } = useCart();
 
     useEffect(() => {
@@ -122,7 +124,8 @@ export const CartPage = () => {
                             color={'primary'}
                             variant={'solid'}
                             style={{ width: '100%', margin: '20px 0'}}
-                            disabled
+                            onClick={() => navigate('/checkout')}
+                            disabled={items.length === 0}
                         >
                             Оформить заказ
                         </Button>

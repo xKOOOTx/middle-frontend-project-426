@@ -14,7 +14,8 @@ import { CatalogPage } from './pages/CatalogPage.tsx'
 import { PromoPage } from './pages/PromoPage.tsx'
 import { ProductPage } from './pages/ProductPage'
 import { CartPage } from './pages/CartPage'
-
+import { CheckoutPage } from './pages/CheckoutPage'
+import { AccountPage } from './pages/AccountPage'
 const { Header, Content, Footer } = Layout;
 
 Sentry.init({
@@ -41,10 +42,11 @@ createRoot(document.getElementById('root')!).render(
                             <Route path={'/'} element={<PromoPage />} />
                             <Route path="/products/:slug" element={<ProductPage />} />
                             <Route path="/catalog" element={<CatalogPage />} />
-                            <Route path="/account" element={<ProtectedRoute><div>Личный кабинет (скоро)</div></ProtectedRoute>} />
+                            <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
                             <Route path="/signup" element={<AuthForm mode={'register'} />} />
                             <Route path="/signin" element={<AuthForm mode={'login'} />} />
                             <Route path="/cart" element={<CartPage />} />
+                            <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
                         </Routes>
                     </Content>
                     <Footer style={{ background: '#fff' }}>
