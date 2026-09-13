@@ -8,6 +8,10 @@ const registerViaUi = async (page: import('@playwright/test').Page, email: strin
     await page.getByTestId('auth-email').fill(email);
     await page.getByTestId('auth-password').fill(password);
     await page.getByTestId('auth-submit').click();
+    // дожидаемся редиректа на '/', который происходит только после того,
+    // как завершится запрос регистрации и куки сессии применятся —
+    // иначе следующий page.goto() может проскочить раньше, чем кука долетит
+    await expect(page).toHaveURL('/');
 };
 
 const addToCart = async (page: import('@playwright/test').Page, slug: string) => {
