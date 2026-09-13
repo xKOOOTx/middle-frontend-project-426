@@ -1,8 +1,9 @@
-import { Flex, Row, Col, Card, Form, Input, InputNumber, Select, Checkbox, Button, Empty, Space, Tag } from 'antd'
+import { Flex, Row, Col, Card, Form, Input, InputNumber, Select, Checkbox, Button, Space, Tag, Pagination } from 'antd'
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { listCategories } from '../api/categories'
 import { listProducts, type ProductFilters } from '../api/products'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, cloneElement, isValidElement } from 'react'
+import type { ReactElement } from 'react'
 import { useSearchParams, Link } from 'react-router'
 import type { components } from '../types/api'
 import { useCart } from '../context/CartContext'
@@ -154,6 +155,11 @@ export const CatalogPage = () => {
     }
 
     return (
+        <>
+        <h1>Комплектующие для ПК</h1>
+        <p style={{ color: '#888888', marginBottom: 20 }}>
+            Видеокарты, процессоры и материнские платы — с фильтрами по категории, цене и наличию.
+        </p>
         <Row gutter={[20, 20]}>
             <Col xs={24} md={6}>
                 <Card data-testid="catalog-filters">
@@ -187,40 +193,60 @@ export const CatalogPage = () => {
                         <Form.Item name={'available'} valuePropName={'checked'}>
                             <Checkbox data-testid="filter-available">Только в наличии</Checkbox>
                         </Form.Item>
-                        <Button data-testid="filter-reset" onClick={() => resetForm()}>Очистить</Button>
+                        <Button data-testid="filter-reset" style={{ width: '100%' }} onClick={() => resetForm()}>
+                            Сбросить фильтры
+                        </Button>
                     </Form>
                 </Card>
             </Col>
             <Col xs={24} md={18}>
-                <Space orientation="vertical" size="medium">
+                <Space orientation="vertical" size="medium" style={{ width: '100%' }}>
+                    <p style={{ color: '#888888', margin: 0 }}>Найдено товаров: {productList?.total ?? 0}</p>
                     <Flex wrap gap={20} justify={productList?.total === 0 ? 'center' : 'space-between'} data-testid="catalog-list">
                         {productList && productList.total > 0 && productList.items.map(product => {
                             return <ItemCard key={product.id} product={product} />
                         })}
 
-                        {productList && productList.total === 0 && (<Empty data-testid="catalog-empty" />)}
+                        {productList && productList.total === 0 && (
+                            <Card data-testid="catalog-empty" style={{ width: '100%', textAlign: 'center', padding: '20px 0' }}>
+                                <h3>Ничего не найдено</h3>
+                                <p style={{ color: '#888888' }}>
+                                    Под выбранные фильтры не подошёл ни один товар. Измените условия или сбросьте фильтры.
+                                </p>
+                                <Button
+                                    color={'primary'}
+                                    onClick={resetForm}
+                                    variant={'filled'}
+                                    style={{ marginTop: 10 }}
+                                >
+                                    Показать все товары
+                                </Button>
+                            </Card>
+                        )}
                     </Flex>
                     {productList && productList.total > 0 && (
-                        <Space data-testid="catalog-pagination">
-                            <Button
-                                data-testid={'catalog-page-prev'}
-                                disabled={page <= 1}
-                                onClick={() => goToPage(page - 1)}
-                            >
-                                Назад
-                            </Button>
-                            <span>{page} из {Math.ceil(productList.total / productList.pageSize)}</span>
-                            <Button
-                                data-testid={'catalog-page-next'}
-                                disabled={page >= Math.ceil(productList.total / productList.pageSize)}
-                                onClick={() => goToPage(page + 1)}
-                            >
-                                Вперёд
-                            </Button>
-                        </Space>
+                        <Flex vertical align={'center'} gap={6} data-testid="catalog-pagination">
+                            <Pagination
+                                current={page}
+                                total={productList.total}
+                                pageSize={productList.pageSize}
+                                onChange={(nextPage) => goToPage(nextPage)}
+                                showSizeChanger={false}
+                                itemRender={(_pageNumber, type, originalElement) => {
+                                    if (type === 'prev' && isValidElement(originalElement)) {
+                                        return cloneElement(originalElement as ReactElement<Record<string, unknown>>, { 'data-testid': 'catalog-page-prev' });
+                                    }
+                                    if (type === 'next' && isValidElement(originalElement)) {
+                                        return cloneElement(originalElement as ReactElement<Record<string, unknown>>, { 'data-testid': 'catalog-page-next' });
+                                    }
+                                    return originalElement;
+                                }}
+                            />
+                        </Flex>
                     )}
                 </Space>
             </Col>
         </Row>
+        </>
     )
 }
