@@ -59,12 +59,14 @@ test('фильтр по цене меняет состав выдачи', async 
 test('сброс фильтров возвращает полный список', async ({ page }) => {
     await page.goto('/catalog?category=motherboards');
 
-    await expect(page.getByTestId('catalog-pagination')).toContainText('из 2'); // 18 / 12 = 2 страницы
+    // 18 / 12 = 2 страницы
+    await expect(page.getByTestId('catalog-pagination').locator('.ant-pagination-item')).toHaveCount(2);
 
     await page.getByTestId('filter-reset').click();
 
     await expect(page).toHaveURL('/catalog');
-    await expect(page.getByTestId('catalog-pagination')).toContainText('из 5'); // 54 / 12 = 5 страниц
+    // 54 / 12 = 5 страниц
+    await expect(page.getByTestId('catalog-pagination').locator('.ant-pagination-item')).toHaveCount(5);
 });
 
 test('комбинация фильтров без совпадений показывает пустое состояние', async ({ page }) => {
