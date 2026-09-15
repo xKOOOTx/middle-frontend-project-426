@@ -1,75 +1,14 @@
-import { Flex, Row, Col, Card, Form, Input, InputNumber, Checkbox, Button, Space, Tag, Pagination } from 'antd'
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { Flex, Row, Col, Card, Form, Input, InputNumber, Checkbox, Button, Space, Pagination } from 'antd'
 import { listCategories } from '../api/categories'
 import { listProducts, type ProductFilters } from '../api/products'
 import { useEffect, useState, useRef, cloneElement, isValidElement } from 'react'
 import type { ReactElement } from 'react'
-import { useSearchParams, Link } from 'react-router'
+import { useSearchParams } from 'react-router'
 import type { components } from '../types/api'
-import { useCart } from '../context/CartContext'
+import { CatalogItemCard } from '../components/CatalogItemCard'
 
 type ProductsList = components['schemas']['ProductList'];
 type Category = components['schemas']['Category'];
-
-const { Meta } = Card;
-
-const ItemCard = ({ product }: { product: components['schemas']['Product'] }) => {
-    const { items, addItem, setQty, removeItem } = useCart();
-    if (!product) return;
-
-    const cartItem = items.find((item) => item.productId === product.id);
-    const handleDecrease = () => {
-        if (!cartItem) return;
-        if (cartItem.qty <= 1) {
-            removeItem(product.id);
-        } else {
-            setQty(product.id, cartItem.qty - 1);
-        }
-    }
-
-    return (
-        <Card
-            data-testid={'catalog-item'}
-            hoverable
-            variant="borderless"
-            style={{ width: 240 }}
-            cover={
-                <img
-                    style={{ minHeight: 240, objectFit: 'cover' }}
-                    draggable={false}
-                    alt={product.categorySlug}
-                    src={product.imageUrl ?? `/${product.categorySlug}.png`}
-                />
-            }
-        >
-            <Meta
-                title={<Link to={`/products/${product.slug}`} data-testid={'catalog-item-name'}>{product.name}</Link>}
-                description={product.description}
-            />
-            <Flex justify={'space-between'} style={{marginTop: '20px', marginBottom: '20px'}}>
-                <span data-testid={'catalog-item-price'}>{product.price.toLocaleString('ru-RU')} ₽</span>
-                <Tag data-testid={'catalog-item-availability'} data-available={String(product.available)} color={product.available ? 'green' : 'red'} variant={'solid'}>{product.available ? 'В наличии' : 'Нет в наличии'}</Tag>
-            </Flex>
-            {cartItem ? (
-                <Flex align={'center'} justify={'space-between'}>
-                    <Button size={'small'} icon={<MinusOutlined />} onClick={handleDecrease} />
-                    <span>{cartItem.qty}</span>
-                    <Button size={'small'} icon={<PlusOutlined />} onClick={() => setQty(product.id, cartItem.qty + 1)} />
-                </Flex>
-            ) : (
-                <Button
-                    disabled={!product.available}
-                    color={'primary'}
-                    variant={'filled'}
-                    style={{ width: '100%' }}
-                    onClick={() => addItem(product.id)}
-                >
-                    В корзину
-                </Button>
-            )}
-        </Card>
-    )
-}
 
 export const CatalogPage = () => {
 
@@ -202,7 +141,7 @@ export const CatalogPage = () => {
                     <p style={{ color: '#888888', margin: 0 }}>Найдено товаров: {productList?.total ?? 0}</p>
                     <Flex wrap gap={20} justify={productList?.total === 0 ? 'center' : 'space-between'} data-testid="catalog-list">
                         {productList && productList.total > 0 && productList.items.map(product => {
-                            return <ItemCard key={product.id} product={product} />
+                            return <CatalogItemCard key={product.id} product={product} />
                         })}
 
                         {productList && productList.total === 0 && (
